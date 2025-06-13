@@ -1,0 +1,146 @@
+<html>
+<head>
+  <title>Om Jarvis Launcher</title>
+  <HTA:APPLICATION 
+    ID="JarvisApp"
+    APPLICATIONNAME="JarvisApp"
+    BORDER="none"
+    CAPTION="no"
+    SHOWINTASKBAR="yes"
+    SINGLEINSTANCE="yes"
+    SYSMENU="yes"
+    SCROLL="no"
+    WINDOWSTATE="maximize"
+  >
+
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    font-family: 'Segoe UI', sans-serif;
+    color: #00ffff;
+    overflow: hidden;
+  }
+
+  body.bg-loaded {
+    background: black url("file:///C:/Users/OM/Desktop/1it9YM.gif") no-repeat center center;
+    background-size: contain;
+  }
+
+  button {
+    padding: 8px 16px;
+    font-size: 22px;
+    margin: 5px;
+    background: transparent;
+    border: 2px solid #00ffff;
+    color: #00ffff;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  button:hover {
+    background-color: #00ffff;
+    color: black;
+    box-shadow: 0 0 10px #00ffff;
+  }
+</style>
+</head>
+
+<body onload="preloadBg();">
+  <!-- Main wrapper: Y-centered, X-offset 40px -->
+  <div id="wrapper" style="
+    display: none;
+    position: absolute;
+    top: 60%;
+    left: 24%;
+    transform: translateY(-50%);
+  ">
+    <!-- Horizontal button container -->
+    <div style="
+      display: flex;
+      gap: 10px;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 10px 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px #00ffff;
+    ">
+      <button onclick="launch('vs', 'Launching VS Code, Sir')">VS</button>
+      <button onclick="launch('chrome', 'Launching Chrome, Sir')">Chrome</button>
+      <button onclick="launch('brave', 'Launching Brave, Sir')">Brave</button>
+      <button onclick="launch('todo', 'Opening ToDo File, Sir')">ToDo</button>
+      <button onclick="launch('aptitude', 'Opening Aptitude PDF, Sir')">Aptitude</button>
+      <button onclick="launch('projects', 'Opening Projects, Sir')">Projects</button>
+      <button onclick="exitLauncher()">Exit</button>
+    </div>
+  </div>
+
+<script language="javascript">
+  function preloadBg() {
+    var img = new Image();
+    img.onload = function () {
+      document.body.className = "bg-loaded";
+
+      setTimeout(function () {
+        var wrapper = document.getElementById("wrapper");
+        if (wrapper) {
+          wrapper.style.display = "block";
+        }
+
+        try {
+          var voice = new ActiveXObject("SAPI.SpVoice");
+          voice.Speak("Jarvis ready for commands, sir.");
+        } catch (e) {
+          alert("Voice init error: " + e.message);
+        }
+
+      }, 200); // slight delay for wrapper safety
+    };
+    img.onerror = function () {
+      alert("Error loading background image.");
+    };
+    img.src = "file:///C:/Users/OM/Downloads/pexels-iriser-1379640.jpg";
+  }
+
+  function speak(text) {
+    try {
+      var v = new ActiveXObject("SAPI.SpVoice");
+      v.Speak(text);
+    } catch (e) {
+      alert("Voice error: " + e.message);
+    }
+  }
+
+  function launch(app, msg) {
+    speak(msg);
+    try {
+      var shell = new ActiveXObject("WScript.Shell");
+      switch (app) {
+        case 'vs':
+          shell.Run('"C:\\Users\\OM\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"'); break;
+        case 'chrome':
+          shell.Run('"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"'); break;
+        case 'brave':
+          shell.Run('"C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"'); break;
+        case 'todo':
+          shell.Run('"C:\\Users\\OM\\Desktop\\docs\\Failur.txt"'); break;
+        case 'aptitude':
+          shell.Run('"C:\\Users\\OM\\Desktop\\docs\\quantitative-aptitude-for-competitive-examinations-by-rs-aggarwal-reprint-2017.pdf"'); break;
+        case 'projects':
+          shell.Run('explorer.exe "C:\\xampp\\htdocs"'); break;
+      }
+    } catch (e) {
+      alert("Execution error: " + e.message);
+    }
+  }
+
+  function exitLauncher() {
+    speak("Goodbye, Sir.");
+    setTimeout(function () { self.close(); }, 800);
+  }
+</script>
+</body>
+</html>

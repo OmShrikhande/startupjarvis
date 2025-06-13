@@ -1,0 +1,25 @@
+# Ignore Python build folders
+__pycache__/
+build/
+dist/
+
+# Ignore pyinstaller spec file
+*.spec
+
+# Ignore executable and batch script
+# *.exe
+*.bat
+
+# Ignore pip installer script
+get-pip.py
+
+# # Ignore screenshots or image files
+# *.png
+# *.jpg
+# *.jpeg
+
+# Ignore Windows tools
+nircmd.exe
+
+# Optional: Ignore all HTA files (if dynamically generated or not needed in Git)
+# *.hta
