@@ -23,3 +23,12 @@ nircmd.exe
 
 # Optional: Ignore all HTA files (if dynamically generated or not needed in Git)
 # *.hta
+config.json
+jarvis_data.db
+pro_jarvis_data.json
+pro_jarvis_data.json.bak
+pro_jarvis_assistant_data.json
+README_PRO.md
+setup_pro_jarvis.py
+pro_jarvis_assistant.py 
+requirements_pro.txt

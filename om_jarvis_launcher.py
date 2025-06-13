@@ -12,6 +12,12 @@ from PyQt5.QtWidgets import (QApplication, QWidget, QVBoxLayout, QPushButton,
                              QLabel, QGraphicsDropShadowEffect, QHBoxLayout, QTextEdit)
 from PyQt5.QtGui import QFont, QColor, QPalette, QPainter, QBrush, QRadialGradient
 from PyQt5.QtCore import Qt, QTimer, QThread, pyqtSignal
+import time
+import pyautogui
+import pywhatkit
+
+# Om Jarvis Launcher - A personal assistant application
+
 
 # === Voice Engine Setup ===
 engine = pyttsx3.init()
@@ -157,62 +163,133 @@ class JarvisLauncher(QWidget):
         self.chat_box.append(f"<b>Jarvis:</b> {text}")
 
     def handle_voice_command(self, command):
-        print(f"Voice command received: {command}")
-        command = command.replace("jarvis", "").strip()
-        self.log_chat(f"Command: {command}")
+            print(f"Voice command received: {command}")
+            command = command.replace("jarvis", "").strip()
+            self.log_chat(f"Command: {command}")
 
-        if "chrome" in command:
-            self.respond_and_launch("Opening Chrome", "C:/Program Files/Google/Chrome/Application/chrome.exe")
-        elif "brave" in command:
-            self.respond_and_launch("Opening Brave", "C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe")
-        elif "code" in command or "vs" in command:
-            self.respond_and_launch("Launching VS Code", "C:/Users/OM/AppData/Local/Programs/Microsoft VS Code/Code.exe")
-        elif "project" in command:
-            self.respond_and_launch("Opening projects", "explorer.exe C:/xampp/htdocs")
-        elif "todo" in command:
-            self.respond_and_launch("Opening to-do list", "C:/Users/OM/Desktop/docs/Failur.txt")
-        elif "aptitude" in command:
-            self.respond_and_launch("Opening aptitude notes", "C:/Users/OM/Desktop/docs/quantitative-aptitude-for-competitive-examinations-by-rs-aggarwal-reprint-2017.pdf")
-        elif "youtube" in command:
-            self.respond("Launching YouTube")
-            webbrowser.open("https://youtube.com")
-        elif "spotify" in command or "music" in command:
-            self.respond("Playing music")
-            webbrowser.open("https://open.spotify.com")
-        elif "shutdown" in command:
-            self.respond("Shutting down system")
-            subprocess.call("shutdown /s /t 5")
-        elif "lock screen" in command or "log off" in command:
-            self.respond("Locking screen")
-            subprocess.call("rundll32.exe user32.dll,LockWorkStation")
-        elif "volume up" in command:
-            subprocess.call(["nircmd.exe", "changesysvolume", "2000"])
-        elif "volume down" in command:
-            subprocess.call(["nircmd.exe", "changesysvolume", "-2000"])
-        elif "weather" in command:
-            info = get_weather()
-            self.respond(info)
-        elif "time" in command:
-            now = datetime.datetime.now().strftime("%H:%M:%S")
-            self.respond(f"The time is {now}")
-        elif "joke" in command:
-            joke = random.choice([
-                "Why don’t scientists trust atoms? Because they make up everything!",
-                "I would tell you a construction pun, but I’m still working on it.",
-                "Why do Java developers wear glasses? Because they don't see sharp."
-            ])
-            self.respond(joke)
-        elif "whatsapp" in command:
-            self.respond_and_launch("Opening WhatsApp", "C:/Users/OM/AppData/Local/WhatsApp/WhatsApp.exe")
-        elif "telegram" in command:
-            self.respond_and_launch("Opening Telegram", "C:/Users/OM/AppData/Roaming/Telegram Desktop/Telegram.exe")
-        elif "exit" in command or "quit" in command:
-            self.close_app()
-        elif "run" in command or "start" in command:
-            app_name = command.replace("run", "").replace("start", "").strip()
-            self.respond_and_launch(f"Trying to start {app_name}", app_name)
-        else:
-            self.respond("Sorry, I couldn't understand.")
+            # Split commands if joined by "and"
+            commands = [cmd.strip() for cmd in command.split(" and ")]
+
+            for cmd in commands:
+                if "chrome" in command or "brave" in command:
+                    browser_path = "C:/Program Files/Google/Chrome/Application/chrome.exe" if "chrome" in command else "C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe"
+                    self.respond_and_launch("Opening browser", browser_path)
+                    time.sleep(3)
+                    if "search" in command:
+                        query = command.split("search")[-1].strip()
+                        if query:
+                            self.respond(f"Searching for {query}")
+                            webbrowser.open(f"https://www.google.com/search?q={query}")
+                    else:
+                        self.respond("Do you want me to search for something?")
+                        follow_up = listen_command()
+                        if follow_up and "search" in follow_up:
+                            query = follow_up.split("search")[-1].strip()
+                            self.respond(f"Searching for {query}")
+                            webbrowser.open(f"https://www.google.com/search?q={query}")
+                        else:
+                            self.respond("Okay, nothing to search.")
+                elif "chrome" in cmd:
+                    self.respond_and_launch("Opening Chrome", "C:/Program Files/Google/Chrome/Application/chrome.exe")
+
+                elif "code" in cmd or "vs" in cmd:
+                    self.respond_and_launch("Launching VS Code", "C:/Users/OM/AppData/Local/Programs/Microsoft VS Code/Code.exe")
+
+                elif "brave" in cmd:
+                    self.respond_and_launch("Opening Brave", "C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe")
+
+                elif "project" in cmd:
+                    self.respond_and_launch("Opening projects", "explorer.exe C:/xampp/htdocs")
+
+                elif "todo" in cmd:
+                    self.respond_and_launch("Opening to-do list", "C:/Users/OM/Desktop/docs/Failur.txt")
+
+                elif "aptitude" in cmd:
+                    self.respond_and_launch("Opening aptitude notes", "C:/Users/OM/Desktop/docs/quantitative-aptitude-for-competitive-examinations-by-rs-aggarwal-reprint-2017.pdf")
+
+                elif "youtube" in cmd:
+                     self.respond("Opening YouTube")
+                     webbrowser.open("https://youtube.com")
+                     time.sleep(2)
+                     self.respond("What do you want me to search on YouTube?")
+                     yt_query = listen_command()
+                     if yt_query:
+                         self.respond(f"Searching YouTube for {yt_query}")
+                         webbrowser.open(f"https://www.youtube.com/results?search_query={yt_query}")
+
+                elif "spotify" in cmd or "music" in cmd:
+                    self.respond("Playing music")
+                    webbrowser.open("https://open.spotify.com")
+
+                elif "whatsapp" in cmd:
+                    self.respond_and_launch("Opening WhatsApp", r"C:\Program Files\WindowsApps\5319275A.WhatsAppDesktop_2.2523.1.0_x64__cv1g1gvanyjgm\WhatsApp.exe")
+                
+                elif "send message" in command and "to" in command:
+                    try:
+                        number = ''.join(filter(str.isdigit, command.split("to")[-1]))
+                        msg = command.split("send message")[1].split("to")[0].strip()
+                        self.respond(f"Sending message to {number}: {msg}")
+                        now = datetime.datetime.now()
+                        pywhatkit.sendwhatmsg(f"+91{number}", msg, now.hour, now.minute + 1)
+                    except Exception as e:
+                        self.respond(f"Error sending message: {e}")
+
+                elif "telegram" in cmd:
+                    self.respond_and_launch("Opening Telegram", "C:/Users/OM/AppData/Roaming/Telegram Desktop/Telegram.exe")
+
+                elif "scroll down" in cmd:
+                    self.respond("Scrolling down")
+                    pyautogui.scroll(-1000)
+
+                elif "scroll up" in cmd:
+                    self.respond("Scrolling up")
+                    pyautogui.scroll(1000)
+
+                elif "go back" in cmd or "back" in cmd:
+                    self.respond("Going back")
+                    pyautogui.hotkey('alt', 'left')
+
+                elif "volume up" in cmd:
+                    subprocess.call(["nircmd.exe", "changesysvolume", "2000"])
+
+                elif "volume down" in cmd:
+                    subprocess.call(["nircmd.exe", "changesysvolume", "-2000"])
+
+                elif "shutdown" in cmd:
+                    self.respond("Shutting down system")
+                    subprocess.call("shutdown /s /t 5")
+
+                elif "lock screen" in cmd or "log off" in cmd:
+                    self.respond("Locking screen")
+                    subprocess.call("rundll32.exe user32.dll,LockWorkStation")
+
+                elif "weather" in cmd:
+                    info = get_weather()
+                    self.respond(info)
+
+                elif "time" in cmd:
+                    now = datetime.datetime.now().strftime("%H:%M:%S")
+                    self.respond(f"The time is {now}")
+
+                elif "joke" in cmd:
+                    joke = random.choice([
+                        "Why don’t scientists trust atoms? Because they make up everything!",
+                        "I would tell you a construction pun, but I’m still working on it.",
+                        "Why do Java developers wear glasses? Because they don't see sharp."
+                    ])
+                    self.respond(joke)
+
+                elif "exit" in cmd or "quit" in cmd:
+                    self.close_app()
+
+                elif "run" in cmd or "start" in cmd:
+                    app_name = cmd.replace("run", "").replace("start", "").strip()
+                    self.respond_and_launch(f"Trying to start {app_name}", app_name)
+
+                else:
+                    self.respond(f"Sorry, I couldn't understand: {cmd}")
+
+
 
     def respond(self, text):
         speak(text)
